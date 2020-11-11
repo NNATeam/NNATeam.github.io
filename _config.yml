@@ -104,5 +104,5 @@ theme: huxblog
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
   type: git
-  repo: https://nnateam.github.io
+  repo: https://github.com/nnateam/nnateam.github.io.git
   branch: main
