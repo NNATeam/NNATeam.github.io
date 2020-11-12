@@ -4,8 +4,8 @@
 
 # Site
 title: NNAT
-subtitle: ''
-description: 'Netease News Android Team'
+subtitle: 'Netease News Android Tech Team'
+description: '网易新闻 Android 技术团队'
 keywords:
 author: John Doe
 language: en
@@ -99,6 +99,8 @@ ignore:
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
 theme: huxblog
+
+header-img: images/banner.png
 
 # Deployment
 ## Docs: https://hexo.io/docs/one-command-deployment
