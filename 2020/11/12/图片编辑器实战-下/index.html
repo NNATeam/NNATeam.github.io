@@ -356,13 +356,13 @@
 <h4 id="6-2-1-让曲线更平滑"><a href="#6-2-1-让曲线更平滑" class="headerlink" title="6.2.1 让曲线更平滑"></a>6.2.1 让曲线更平滑</h4><p>虽然我们已经手动补了很多的点，但是由于我们的补点方式是在两个触摸点构成的直线上补点的，所以我们的曲线在某些时候还是不够平滑。</p>
 <p>如果想让曲线更加平滑，我们可以在补点的时候利用<strong>贝塞尔曲线</strong>公式来补。</p>
 <p><strong>一阶贝塞尔曲线：</strong></p>
-<p><img src="1pbm8g8qe6.png" alt="1pbm8g8qe6"></p>
+<p><img src="1pbm8g8qe6.jpg" alt="1pbm8g8qe6"></p>
 <p><img src="4ttmh3k1mq.png" alt="4ttmh3k1mq"></p>
 <p><strong>二阶贝塞尔曲线：</strong></p>
-<p><img src="1pjdzn40dq.png" alt="1pjdzn40dq"></p>
+<p><img src="1pjdzn40dq.jpg" alt="1pjdzn40dq"></p>
 <p><img src="rdhb67vezo.png" alt="rdhb67vezo"></p>
 <p><strong>三阶贝塞尔曲线：</strong></p>
-<p><img src="qesak0w6q5.png" alt="qesak0w6q5"></p>
+<p><img src="qesak0w6q5.jpg" alt="qesak0w6q5"></p>
 <p><img src="7hlbv0b6c3.png" alt="7hlbv0b6c3"></p>
 <p>我们以二阶贝塞尔曲线为例，可以看到共有P0，P1，P2三个点，<strong>其中P0代表起始点，P2代表终止点，P1代表控制点，用来控制曲线的形状</strong>。当这三个点确定后，就只有t这一个变量，t的取值范围从0到1，当t取不同值的时候，根据公式就能得到曲线上的一个点。三阶贝塞尔曲线也是类似，其中P1，P2作为控制点。</p>
 <p>了解了贝塞尔曲线公式之后，我们就可以在补点的时候，每三个点或每四个点构成作为曲线的起始点，终止点和控制点，然后我们根据公式对t取不同的值求出曲线上的其他点补齐就可以了。</p>
