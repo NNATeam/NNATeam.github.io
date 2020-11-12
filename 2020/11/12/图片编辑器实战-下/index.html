@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="网易新闻 Android 技术团队">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          图片编辑器实战(下) - undefined
+        
+    </title>
+
+    <link rel="canonical" href="http://example.com/2020/11/12/图片编辑器实战-下/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/hux-blog.min.css">
+
+
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">NNAT</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+<!-- Image to hack wechat -->
+<!-- <img src="http://example.com/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/images/banner.png')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                    </div>
+                    <h1>图片编辑器实战(下)</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by 昊源 on
+                        2020-11-12
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <h2 id="1-分层绘制"><a href="#1-分层绘制" class="headerlink" title="1. 分层绘制"></a>1. 分层绘制</h2><p>我们的图片编辑功能器在交互方案上有一个很重要的点：涂鸦，马赛克，贴纸等操作，都是在固定的层级上绘制的，层级高的会遮盖层级低的，也就是说，画笔画出的线只能画在涂鸦那一层，而不能画到贴纸上。我们划分的层级<strong>从低到高</strong>依次是：</p>
+<ol>
+<li>原图/滤镜</li>
+<li>马赛克</li>
+<li>涂鸦</li>
+<li>贴纸</li>
+</ol>
+<h3 id="1-1-如何实现分层"><a href="#1-1-如何实现分层" class="headerlink" title="1.1 如何实现分层"></a>1.1 如何实现分层</h3><p>那么我们如何使用OpenGL来实现分层绘制呢？我们继承GLSurfaceView定义一个自己的<strong>ImgGLSurface</strong>类，并且自己实现Renderer接口，接下来我们可以定义多个子Renderer分别来负责绘制不同的图层，然后在<strong>onDrawFrame</strong>方法中，按照层级从低到高依次调用这几个Renderer的draw方法绘制对应图层即可。</p>
+<p><strong>ImgGLSurfaceView</strong>的类结构如下：</p>
+<p><img src="Snip20201102_6.png" alt="Snip20201102_6"></p>
+<h3 id="1-2-OpenGL颜色混合"><a href="#1-2-OpenGL颜色混合" class="headerlink" title="1.2 OpenGL颜色混合"></a>1.2 OpenGL颜色混合</h3><p>由于我们的图像是多个图层叠加的，所以我们需要注意在图层之间的<strong>颜色混合问题</strong>。什么是颜色混合呢？<strong>就是把两个图层的颜色根据某种规则混合起来得到一个新的颜色</strong>。</p>
+<p>如果我们不使用颜色混合，我们就无法绘制一个透明图片。比如说，在我们的图片编辑器中，所有贴纸图片资源四周的像素都是透明的，当我们把渲染贴纸时会发现，透明像素部分变成了黑色，这就是没有开启颜色混合导致的。</p>
+<p>在OpenGL中，通过以下代码开启颜色混合：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GLES20.glEnable(GLES20.GL_BLEND)</span><br></pre></td></tr></table></figure>
+
+<p>除此之外，还需要设置混合的方式，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GLES20.glBlendFunc(GL10.GL_ONE, GL10.GL_ONE_MINUS_SRC_ALPHA);</span><br></pre></td></tr></table></figure>
+
+<p>混合后的颜色可以这样理解：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">混合后颜色 = 源颜色 * 源因子 + 目标颜色 * 目标因子</span><br></pre></td></tr></table></figure>
+
+<p>上面glBlendFunc中，第一个参数就是设置源因子，第二个参数就是设置目标因子。</p>
+<p>OpenGL中提供了很多种混合因子的取值，设源和目标的颜色数组分别为 S=(sR, sG, sB, sA) 和 D=(dR, dG, dB, dA) ， OpenGL中提供的参数说明如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">GL_ZERO                   = (<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>)</span><br><span class="line">GL_ONE                    = (<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>)</span><br><span class="line">GL_SRC_COLOR              =(sR, sG, sB, sA)</span><br><span class="line">GL_DST_COLOR              =(dR, dG, dB, dA)</span><br><span class="line">GL_ONE_MINUS_SRC_COLOR    =(<span class="number">1</span>-sR, <span class="number">1</span>-sG, <span class="number">1</span>-sB, <span class="number">1</span>-sA)</span><br><span class="line">GL_ONE_MINUS_DST_COLOR    =(<span class="number">1</span>-dR, <span class="number">1</span>-dG, <span class="number">1</span>-dB, <span class="number">1</span>-dA)</span><br><span class="line">GL_SRC_ALPHA              =(sA, sA, sA, sA)</span><br><span class="line">GL_DST_ALPHA              =(dA, dA, dA, dA)</span><br><span class="line">GL_ONE_MINUS_SRC_ALPHA    =(<span class="number">1</span>-sA, <span class="number">1</span>-sA, <span class="number">1</span>-sA, <span class="number">1</span>-sA)</span><br><span class="line">GL_ONE_MINUS_DST_ALPHA    =(<span class="number">1</span>-dA, <span class="number">1</span>-dA, <span class="number">1</span>-dA, <span class="number">1</span>-dA)</span><br><span class="line">GL_SRC_ALPHA_SATURATE     =(i, i, i, <span class="number">1</span> )   <span class="comment">//i取值为min(sA, 1-dA)</span></span><br></pre></td></tr></table></figure>
+
+<p>我们上面示例中设置的GL10.GL_ONE, GL10.GL_ONE_MINUS_SRC_ALPHA这两个参数，达到的效果就是当前图片中透明的部分在混合显示为下面图层的像素，也就是说让下面图层透了出来，这就解决了我们之前的问题。</p>
+<h2 id="2-画面矫正"><a href="#2-画面矫正" class="headerlink" title="2. 画面矫正"></a>2. 画面矫正</h2><p>在上一篇OpenGL基础中讲到的使用OpenGL绘制图片的例子中，我们会发现一个问题：图片是铺满全屏的，而屏幕的宽高比和图片本身的宽高比一般是不同的，所以就会出现画面拉伸的情况。为了让我们的图片能按照图片原比例显示，需要我们做一些处理矫正画面，<strong>常见的有两种方案：1.通过设置OpenGL的ViewPort实现 2.通过正交投影实现</strong></p>
+<h3 id="2-1-设置ViewPort实现"><a href="#2-1-设置ViewPort实现" class="headerlink" title="2.1 设置ViewPort实现"></a>2.1 设置ViewPort实现</h3><p>之前我们讲过，ViewPort表示了OpenGL渲染画面的范围，那么我们就可以根据图片的宽高比计算出ViewPort的宽高，这样ViewPort的宽高比和图片的宽高比是一致的，就不会出现拉伸的问题了。代码示例如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">calc</span><span class="params">(<span class="keyword">int</span> viewWidth, <span class="keyword">int</span> viewHeight, <span class="keyword">int</span> imgWidth, <span class="keyword">int</span> imgHeight)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">float</span> scaling = imgWidth / (<span class="keyword">float</span>) imgHeight;</span><br><span class="line">    <span class="keyword">float</span> viewRatio = viewWidth / (<span class="keyword">float</span>) viewHeight;</span><br><span class="line">    <span class="keyword">float</span> s = scaling / viewRatio;</span><br><span class="line">    <span class="keyword">int</span> w, h;</span><br><span class="line">    <span class="keyword">if</span> (s &lt; <span class="number">1.0</span>) &#123;</span><br><span class="line">          w = (<span class="keyword">int</span>) (viewHeight * scaling);</span><br><span class="line">          h = viewHeight;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">          w = viewWidth;</span><br><span class="line">          h = (<span class="keyword">int</span>) (viewWidth / scaling);</span><br><span class="line">    &#125;</span><br><span class="line">    width = w;</span><br><span class="line">    height = h;</span><br><span class="line">    x = (viewWidth - w) / <span class="number">2</span>;</span><br><span class="line">    y = (viewHeight - h) / <span class="number">2</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>但是这个方法在我们的项目上有个问题：我们的图片编辑器是支持放大图片的，所以当我们放大图片时，超出ViewPort范围的部分是显示不出来的，当然我们也可以动态的更改ViewPort的大小，但这样做就复杂了不少，所以我们并没有采用这种方案。</p>
+<h3 id="2-2-正交投影实现"><a href="#2-2-正交投影实现" class="headerlink" title="2.2 正交投影实现"></a>2.2 正交投影实现</h3><p>在介绍这个方案前，先简单讲一下OpenGL中的投影。</p>
+<p>投影定义了一个可视空间，在可视空间之外的点最终都会被裁剪不会显示在屏幕上，我们可以通过投影矩阵来调整画面范围。OpenGL提供了以下两种类型的投影：</p>
+<h4 id="2-2-1-透视投影"><a href="#2-2-1-透视投影" class="headerlink" title="2.2.1 透视投影"></a>2.2.1 透视投影</h4><p><img src="540.png" alt="img"></p>
+<p>可以看出，透视投影的效果和人眼看物体是一样的，具有近大远小的效果。</p>
+<p><strong>可视空间：</strong> 在透视投影中，近平面和远平面以及他们四边的连线构成的一个空间就是透视投影的可见空间，在这个空间之外的坐标将被裁剪掉。</p>
+<p>由于透视投影的效果和人眼一样，所以一般用于3D渲染中。</p>
+<h4 id="2-2-2-正交投影"><a href="#2-2-2-正交投影" class="headerlink" title="2.2.2 正交投影"></a>2.2.2 正交投影</h4><p><img src="660.png" alt="img"></p>
+<p>和透视投影不同的是，正交投影中相机的视线不是从一个点散发出的，而是一组平行线，所以他没有近大远小的效果。</p>
+<p><strong>可视空间:</strong>  正交投影除了近平面和远平面，还有上，下，左，右平面，这些平面组成的立方体构成了正交投影的可视空间，在这个空间之外的坐标将被裁剪掉。</p>
+<h4 id="2-2-3-投影矩阵"><a href="#2-2-3-投影矩阵" class="headerlink" title="2.2.3 投影矩阵"></a>2.2.3 投影矩阵</h4><p>在OpenGL中，图形变换一般是通过矩阵实现的，我们可以在顶点着色器中，用矩阵乘我们的顶点坐标实现变换：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">gl_Position</span> = u_Matrix * a_Position;</span><br></pre></td></tr></table></figure>
+
+<p>在Android平台，android.opengl.Matrix这个类为我们提供了一些常见的矩阵变换方法，如平移，缩放，旋转，投影等。</p>
+<p>我们可以通过orthoM这个方法来构建一个正交投影矩阵：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Computes an orthographic projection matrix.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> m returns the result 正交投影矩阵</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> mOffset 偏移量，默认为 0 ,不偏移</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> left 左平面距离</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> right 右平面距离</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> bottom 下平面距离</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> top 上平面距离</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> near 近平面距离</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> far 远平面距离</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">orthoM</span><span class="params">(<span class="keyword">float</span>[] m, <span class="keyword">int</span> mOffset,</span></span></span><br><span class="line"><span class="function"><span class="params">    <span class="keyword">float</span> left, <span class="keyword">float</span> right, <span class="keyword">float</span> bottom, <span class="keyword">float</span> top,</span></span></span><br><span class="line"><span class="function"><span class="params">    <span class="keyword">float</span> near, <span class="keyword">float</span> far)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>在默认情况下，left，right是-1和1，top和bottom也是一样。</p>
+<p>接下来举例说明如何利用正交投影来调整画面比例：</p>
+<p>假设我们屏幕宽高为1080<em>1920，而我们的图片宽高是1000\</em>540。此时我们需要图片宽度撑满屏幕，高度按图片原比例缩放，也就是说，缩放后的宽高是1080*540。</p>
+<p>回到我们创建投影矩阵的orthoM方法，默认撑满屏幕情况下，left，right分别对应-1和1，这里我们宽度需要撑满屏幕，所以取默认值即可。而高度默认是1920缩放到540，缩小了3.55倍。</p>
+<p>默认情况下，缩放比例是1：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scale = <span class="number">2</span>/(top-bottom)=<span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>那么缩小3.55倍就是：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">scale= <span class="number">2</span>/(top-bottom)=<span class="number">1</span>/<span class="number">3.55</span></span><br><span class="line">top-bottom=<span class="number">2</span>*<span class="number">3.55</span></span><br></pre></td></tr></table></figure>
+
+<p>由于top，bottom互为相反数，所以分别是3.55，-3.55。所以我们正交投影的参数为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Matrix.orthoM(mPrjMatrix, <span class="number">0</span>, -<span class="number">1</span>, <span class="number">1</span>, <span class="number">3.555556</span>, -<span class="number">3.555556</span>, <span class="number">1</span>, <span class="number">2</span>)</span><br></pre></td></tr></table></figure>
+
+<p>接下来只要把矩阵传递给顶点着色器就可以实现画面比例矫正了。</p>
+<h2 id="3-支持手势操作"><a href="#3-支持手势操作" class="headerlink" title="3. 支持手势操作"></a>3. 支持手势操作</h2><p>我们的图片编辑器需要支持在编辑图片的过程中，能通过手势来平移，缩放图片，即单指拖动图片，双指缩放图片。</p>
+<h3 id="3-1-基本实现思路"><a href="#3-1-基本实现思路" class="headerlink" title="3.1 基本实现思路"></a>3.1 基本实现思路</h3><p>在OpenGL中，图形变换一般都是使用矩阵来实现的，如平移，缩放，旋转，投影等，在Android平台提供了<strong>Matrix</strong>这个类封装了一些常用的矩阵变换。</p>
+<p>基本实现思路如下：</p>
+<ol>
+<li>声明TranslateMatrix和ScaleMatrix两个矩阵分别用来存储平移和缩放操作</li>
+<li>在OnTouchEvent中识别出手势操作：平移或缩放，并计算出相应参数。</li>
+<li>根据手势操作，使用Matrix中提供的方法对相应的矩阵进行矩阵运算</li>
+<li>把我们所有的矩阵依次相乘得到一个最终矩阵，即包括平移矩阵，缩放矩阵，投影矩阵</li>
+<li>由于我们有多个图层，多个Renderer，所以需要把最终矩阵传递给每个Renderer，然后每个Renderer再把这个矩阵传递到顶点着色器中和顶点相乘，这样当我们手势操作的时候每个图层就可以跟着一起变换了。</li>
+</ol>
+<h3 id="3-2-OpenGL中的矩阵变换"><a href="#3-2-OpenGL中的矩阵变换" class="headerlink" title="3.2 OpenGL中的矩阵变换"></a>3.2 OpenGL中的矩阵变换</h3><h4 id="3-2-1-单位矩阵"><a href="#3-2-1-单位矩阵" class="headerlink" title="3.2.1 单位矩阵"></a>3.2.1 单位矩阵</h4><p>单位矩阵是一个除了对角线以外都是0的<strong>N×N</strong>矩阵。在下式中可以看到，这种变换矩阵使一个向量完全不变：</p>
+<p><img src="image-20201110172443444.png" alt="image-20201110172443444"></p>
+<h4 id="3-2-2-常用矩阵"><a href="#3-2-2-常用矩阵" class="headerlink" title="3.2.2 常用矩阵"></a>3.2.2 常用矩阵</h4><p>我们常用的矩阵主要是平移，缩放，旋转三种。</p>
+<p><strong>平移矩阵：</strong></p>
+<p><img src="image-20201110173949578.png" alt="image-20201110173949578"></p>
+<p><strong>缩放矩阵：</strong></p>
+<p><img src="image-20201110174036333.png" alt="image-20201110174036333"></p>
+<p><strong>旋转矩阵：</strong></p>
+<p>沿X轴旋转：</p>
+<p><img src="image-20201110174114435.png" alt="image-20201110174114435"></p>
+<p>沿y轴旋转：</p>
+<p><img src="image-20201110174213266.png" alt="image-20201110174213266"></p>
+<p>沿z轴旋转：</p>
+<p><img src="image-20201110174316062.png" alt="image-20201110174316062"></p>
+<p>在Matrix中，也提供了相应的工具方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 平移</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">translateM</span><span class="params">(<span class="keyword">float</span>[] m, <span class="keyword">int</span> mOffset, <span class="keyword">float</span> x, <span class="keyword">float</span> y, <span class="keyword">float</span> z)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 缩放</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">scaleM</span><span class="params">(<span class="keyword">float</span>[] m, <span class="keyword">int</span> mOffset, <span class="keyword">float</span> x, <span class="keyword">float</span> y, <span class="keyword">float</span> z)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 旋转</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">rotateM</span><span class="params">(<span class="keyword">float</span>[] m, <span class="keyword">int</span> mOffset, <span class="keyword">float</span> a, <span class="keyword">float</span> x, <span class="keyword">float</span> y, <span class="keyword">float</span> z)</span></span></span><br></pre></td></tr></table></figure>
+
+<h4 id="3-2-3-变换顺序"><a href="#3-2-3-变换顺序" class="headerlink" title="3.2.3 变换顺序"></a>3.2.3 变换顺序</h4><p>在使用矩阵变换的时候，需要注意变换顺序，不同的变换顺序将产生不同的结果。示例如下：</p>
+<p>先平移后缩放：</p>
+<p><img src="72.png" alt="img"></p>
+<p>先缩放后平移：</p>
+<p><img src="73.png" alt="img"></p>
+<p>当我们这样调用时：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Matrix.translateM(mMatrix, <span class="number">0</span>, <span class="number">0.5f</span>, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">Matrix.rotateM(mMatrix, <span class="number">0</span>, <span class="number">90f</span>, <span class="number">0f</span>, <span class="number">0f</span>, <span class="number">1f</span>);</span><br><span class="line">Matrix.scaleM(mMatrix, <span class="number">0</span>, <span class="number">1.5f</span>, <span class="number">1f</span>, <span class="number">1f</span>);</span><br></pre></td></tr></table></figure>
+
+<p>我们会发现实际效果是先缩放，然后旋转，然后平移，这和我们代码调用顺序是相反的，这是为什么呢？</p>
+<p>以缩放矩阵为例，当我们调用Matrix.scaleM方法时，传入一个矩阵M，得到一个矩阵M2，这个M2是原矩阵M<strong>右乘</strong>缩放矩阵S得到的，所以当我们连续调用多个变换时，最后调用的矩阵被乘在了最右边，而我们用这个最终的矩阵去<strong>左乘</strong>我们的顶点坐标时，最右边的矩阵会最先被应用，这就是为什么实际变换顺序和代码调用顺序相反的原因了。</p>
+<h2 id="4-离屏渲染"><a href="#4-离屏渲染" class="headerlink" title="4. 离屏渲染"></a>4. 离屏渲染</h2><p>我们使用OpenGL进行渲染一般都是直接绘制在手机屏幕上的，那么可以在用户看不到的地方绘制吗？答案是可以的，OpenGL提供了<strong>帧缓冲对象</strong>也就是<strong>FrameBufferObject</strong> 以下简称<strong>FBO</strong> ,可以用来实现离屏渲染。</p>
+<blockquote>
+<p>OpenGL 在渲染到系统窗口之前，都会将数据送到 <code>FBO</code> 上，也就是说，<code>FBO</code> 其实一直在默默的为我们服务。<br>所以，OpenGL 在一开始就创建了一个默认的 FBO。</p>
+</blockquote>
+<p>其实在很多场景我们都需要利用FBO来做离屏渲染，比如：</p>
+<ul>
+<li><p><strong>保存图片编辑的最终结果：</strong></p>
+<p>在我们的图片编辑器中，点击完成按钮后我们需要生成一个编辑后的Bitmap，这里我们可以使用<strong>glReadPixels</strong>方法来读取当前OpenGL渲染的图像的像素信息，然后将这些信息存储到Bitmap里，但是这里会发现：我们得到的这个bitmap图像是上下颠倒的，这是因为android中屏幕和Bitmap的原点在<strong>左上角</strong>，而OpenGL纹理的原点在<strong>左下角</strong>。为了解决这个问题，我们需要绘制一个颠倒的图像然后再通过<strong>glReadPixels</strong>来读取信息，但是我们又不能让颠倒的图像绘制到屏幕上，所以我们就可以把颠倒的图像绘制到FBO上再去读取到Bitmap中。</p>
+</li>
+<li><p><strong>保存渲染的中间结果：</strong></p>
+<p>有时我们需要用FBO来保存一些中间结果，比如我们的马赛克效果需要一个底图作为输入信息，但是我们的底图是可以加滤镜的，当底图切换滤镜的时候，马赛克的这个输入信息也需要随之变化，这里我们就需要把经过滤镜后的底图绘制到FBO中，然后再从FBO中读取出来作为马赛克效果的输入信息。</p>
+</li>
+<li><p><strong>实现一些滤镜效果：</strong></p>
+<p>使用FBO也可以实现一些滤镜效果，比如视频里的灵魂出窍效果：<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/1a7741608083%E3%80%82">https://www.jianshu.com/p/1a7741608083。</a></p>
+</li>
+</ul>
+<p>使用FBO代码示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">bindFB</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 1. 创建FrameBuffer</span></span><br><span class="line">    GLES20.glGenFramebuffers(<span class="number">1</span>, mFrameBuffer, <span class="number">0</span>);</span><br><span class="line">    <span class="comment">// 2.1 生成纹理对象</span></span><br><span class="line">    GLES20.glGenTextures(<span class="number">1</span>, mTexture, <span class="number">0</span>);</span><br><span class="line">    <span class="comment">// 2.2 绑定纹理对象</span></span><br><span class="line">    GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTexture[<span class="number">0</span>]);</span><br><span class="line">    <span class="comment">// 2.3 设置纹理对象的相关信息：颜色模式、大小</span></span><br><span class="line">    GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, <span class="number">0</span>, GLES20.GL_RGBA,</span><br><span class="line">            getResultWidth(), getResultHeight(),</span><br><span class="line">            <span class="number">0</span>, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, <span class="keyword">null</span>);</span><br><span class="line">    <span class="comment">// 2.4 纹理过滤参数设置</span></span><br><span class="line">    GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);</span><br><span class="line">    GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);</span><br><span class="line">    GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);</span><br><span class="line">    GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 3. 绑定FrameBuffer到当前的绘制环境上</span></span><br><span class="line">    GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mFrameBuffer[<span class="number">0</span>]);</span><br><span class="line">    <span class="comment">// 4. 将纹理对象挂载到FrameBuffer上，存储颜色信息</span></span><br><span class="line">    GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0,</span><br><span class="line">            GLES20.GL_TEXTURE_2D, mTexture[<span class="number">0</span>], <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 5. 解绑当前纹理，避免后续无关的操作影响了纹理内容</span></span><br><span class="line">    GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, <span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"> <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">unbindFB</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 解绑FrameBuffer</span></span><br><span class="line">        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, <span class="number">0</span>);</span><br><span class="line">        GLES20.glDeleteFramebuffers(<span class="number">1</span>, mFrameBuffer, <span class="number">0</span>);</span><br><span class="line">        GLES20.glDeleteTextures(<span class="number">1</span>, mTexture, <span class="number">0</span>);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>使用步骤如下：</p>
+<ol>
+<li>创建FrameBuffer</li>
+<li>生成一个纹理，并对这个纹理做些设置，这里和之前绘制图片的例子里一样</li>
+<li>绑定FrameBuffer到当前的绘制环境上</li>
+<li>将上面创建的纹理和FrameBuffer绑定</li>
+<li>解绑当前纹理，避免后续无关的操作影响了纹理内容</li>
+<li>绘制图像，这时所有的绘制操作都会绘制到FrameBuffer而不是屏幕了</li>
+<li>解绑FrameBuffer</li>
+</ol>
+<h2 id="5-滤镜"><a href="#5-滤镜" class="headerlink" title="5. 滤镜"></a>5. 滤镜</h2><p>之前我们介绍过，在片段着色器中我们可以指定每个小片段的颜色值，<strong>所以很多滤镜效果其实基本都是在片段着色器上做文章的。</strong></p>
+<p>接下来我们看几个简单的滤镜效果实现：</p>
+<p><strong>原图：</strong></p>
+<img src="Screenshot_20201110-190632.png" alt="Screenshot_20201110-190632" style="zoom:33%;" />
+
+<p><strong>反色滤镜</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String FRAGMENT_SHADER =</span><br><span class="line">                <span class="string">&quot;precision mediump float;\n&quot;</span> +</span><br><span class="line">                <span class="string">&quot;varying vec2 v_TexCoord;\n&quot;</span> +</span><br><span class="line">                <span class="string">&quot;uniform sampler2D u_TextureUnit;\n&quot;</span> +</span><br><span class="line">                <span class="string">&quot;void main() &#123;\n&quot;</span> +</span><br><span class="line">                <span class="string">&quot;       vec4 src = texture2D(u_TextureUnit, v_TexCoord);\n&quot;</span> +</span><br><span class="line">                <span class="string">&quot;       gl_FragColor = vec4(1.0 - src.r, 1.0 - src.g, 1.0 - src.b, 1.0);\n&quot;</span> +</span><br><span class="line">                <span class="string">&quot;&#125;&quot;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>反色滤镜很简单，就是用1减去原本的色值得到反色，效果如下：</p>
+<img src="Screenshot_20201110-190538.png" alt="Screenshot_20201110-190538" style="zoom:33%;" />
+
+<p><strong>灰色滤镜：</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String FRAGMENT_SHADER =</span><br><span class="line">                <span class="string">&quot;precision mediump float;\n&quot;</span> +</span><br><span class="line">                <span class="string">&quot;varying vec2 v_TexCoord;\n&quot;</span> +</span><br><span class="line">                <span class="string">&quot;uniform sampler2D u_TextureUnit;\n&quot;</span> +</span><br><span class="line">                <span class="string">&quot;void main() &#123;\n&quot;</span> +</span><br><span class="line">                <span class="string">&quot;     vec4 src = texture2D(u_TextureUnit, v_TexCoord);\n&quot;</span> +</span><br><span class="line">                <span class="string">&quot;     float gray = (src.r + src.g + src.b) / 3.0;\n&quot;</span> +</span><br><span class="line">                <span class="string">&quot;     gl_FragColor =vec4(gray, gray, gray, 1.0);\n&quot;</span> +</span><br><span class="line">                <span class="string">&quot;&#125;&quot;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>效果如下：</p>
+<img src="Screenshot_20201110-190551.png" alt="Screenshot_20201110-190551" style="zoom:33%;" />
+
+<p>更多OpenGL实现的滤镜效果，我们可以参考著名的开源库<strong>GPUImg</strong>，里面有很多常用滤镜的实现：</p>
+<p>GPUImage：<a target="_blank" rel="noopener" href="https://github.com/cats-oss/android-gpuimage">https://github.com/cats-oss/android-gpuimage</a></p>
+<p>GPUImage Plus: <a target="_blank" rel="noopener" href="https://github.com/wysaid/android-gpuimage-plus">https://github.com/wysaid/android-gpuimage-plus</a></p>
+<p>而我们的图片编辑器中的滤镜，则是由设计同学提供滤镜的对比度，饱和度，曝光等7个参数，然后我们在滤镜基类<strong>BaseFilter</strong>中的片段着色器去实现这7个参数，每个不同的滤镜设置不同的参数值就可以了。</p>
+<p>滤镜参数如下(后面可能会有调整，仅做为示例)：</p>
+<p><img src="a90ae8d7a8d29366dffcf1ced91132e0.png" alt="a90ae8d7a8d29366dffcf1ced91132e0"></p>
+<h2 id="6-涂鸦"><a href="#6-涂鸦" class="headerlink" title="6. 涂鸦"></a>6. 涂鸦</h2><h3 id="6-1-基本实现步骤"><a href="#6-1-基本实现步骤" class="headerlink" title="6.1 基本实现步骤"></a>6.1 基本实现步骤</h3><p>实现涂鸦功能我们可以分为几个基本步骤：</p>
+<ol>
+<li>在GLSurfaceView的OnTouchEvent中获得手指触摸的坐标</li>
+<li>将获得的屏幕坐标转换为OpenGL的世界坐标</li>
+<li>将这些点连线，渲染</li>
+</ol>
+<p>看起来似乎很简单，但其实还有很多问题。</p>
+<h4 id="6-1-1-线宽问题"><a href="#6-1-1-线宽问题" class="headerlink" title="6.1.1 线宽问题"></a>6.1.1 线宽问题</h4><p>之前介绍过，OpenGL中有三种基本图元：点，线，三角形。当我们使用GL_LINES，GL_LINE_LOOP，GL_LINE_STRIP等绘制模式时，会发现不论我们怎么设置线宽，在大部分Android设备上线总是很细，这是因为OpenGL本身是一套软件接口，具体实现由硬件厂商决定，所以不同设备上支持的最大线宽是不一样的。经过试验发现：在很多Android设备上，线宽只能设置1~10这个范围，这可以说是很坑的问题了。</p>
+<p>由于线宽问题，我们就不能直接用线图元来连接几个触摸点了，既然线不能用，那我们只能改用点图元或者三角形图元来自己拼接出一条线的效果，这样我们就能自由控制线宽了。</p>
+<p>使用三角形来拼接成线的方案实现起来难度较高，<strong>所以我们采用点拼接成线的方案</strong>。但是由于我们的屏幕采集触摸点的频率有限，所以我们在OnTouchEvent回调中得到的点是稀疏的，无法直接拼接成线，这就需要我们手动在两个触摸点之间补点，代码示例如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addPoint</span><span class="params">(<span class="keyword">float</span> x, <span class="keyword">float</span> y)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> count = (<span class="keyword">int</span>) Math.max(Math.ceil(Math.sqrt(Math.pow(x - mLastX, <span class="number">2</span>) + Math.pow(y - mLastY, <span class="number">2</span>))) / mPixelPerPoint, <span class="number">1</span>);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; count; i++) &#123;</span><br><span class="line">        <span class="keyword">float</span> subX = mLastX + (x - mLastX) * (i * <span class="number">1f</span> / count);</span><br><span class="line">        <span class="keyword">float</span> subY = mLastY + (y - mLastY) * (i * <span class="number">1f</span> / count);</span><br><span class="line">        putPoint(subX, subY);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    mLastX = x;</span><br><span class="line">    mLastY = y;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们在两个点之间手动插入的点越多，拼接出的线锯齿就越小，效果就越好。由于我们采用点图元进行绘制，那么如果想要调整画线的线宽只需要修改每个点图元的大小即可，<strong>gl_PointSize</strong>这个着色器内建变量就可以用来指定点图元的大小：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">gl_PointSize</span> = u_PointSize;</span><br></pre></td></tr></table></figure>
+
+<h4 id="6-1-2-笔触优化"><a href="#6-1-2-笔触优化" class="headerlink" title="6.1.2 笔触优化"></a>6.1.2 笔触优化</h4><p>进过上面的步骤我们虽然能画出曲线了，但是由于我们是使用点图元来绘制的，而在OpenGL中，点图元是正方形的，这就导致我们画出的线很不好看：</p>
+<img src="Screenshot_20201109-110808.png" alt="Screenshot_20201109-110808" style="zoom: 33%;" />
+
+<p>那么为了解决这个问题，我们需要把我们画笔的笔触从方形改为圆形，那么问题关键在于：<strong>在OpenGL中如何画一个圆点？</strong></p>
+<p>为了画出圆点，我们需要在片段着色器中进行裁剪：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">float</span> dist = <span class="built_in">length</span>(<span class="built_in">gl_PointCoord</span> - <span class="type">vec2</span>(<span class="number">0.5</span>));</span><br><span class="line"><span class="type">float</span> value = -<span class="built_in">smoothstep</span>(<span class="number">0.48</span>, <span class="number">0.5</span>, dist) + <span class="number">1.0</span>;</span><br><span class="line"><span class="keyword">if</span> (value == <span class="number">0.0</span>) &#123;</span><br><span class="line">							<span class="keyword">discard</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>gl_PointCoord</strong> ：存储的是当前片段所在点图元的二维坐标。点的范围是 0.0 到 1.0。如果当前的图元不是一个点，那么从 <code>gl_PointCoord</code> 读出的值是未定义的。也就是说，<strong>gl_PointCoord</strong>这个变量能告诉我们当前片段在这个点图元中的相对位置。</p>
+<p>接下来我们调用内建函数**length()**来获取当前片段到点图元中心点(0.5，0.5)的距离dist。</p>
+<p>**smoothstep()**也是一个内建函数：传入三个参数 a,b, x,如果 x 小于等于 a,得到 0,如果 x 大于等于 b,得到 1,如果 a&lt;x&lt;b,则按照一定规则进行插值,如果 a 大于或者等于 b,则返回 undefine。</p>
+<p><strong>disicard</strong>是glsl中的一个关键字，表示抛弃当前片段。</p>
+<p>当dist超过0.5的时候，表明当前片段已经超出了圆的范围，此时value的值为0，我们可以使用<strong>discard</strong>关键字将这个片段抛弃掉。</p>
+<p>经过上面这段处理，我们画出的每个点就变成圆点了：</p>
+<img src="Screenshot_20201109-115600.png" alt="Screenshot_20201109-115600" style="zoom:33%;" />
+
+<h4 id="6-1-3-支持撤回"><a href="#6-1-3-支持撤回" class="headerlink" title="6.1.3 支持撤回"></a>6.1.3 支持撤回</h4><p>我们的图片编辑器是支持用户撤回画线的，要实现这个也比较简单。我们只需要将画线相关的信息封装到一个GLLine对象中，每产生一条画线，就生成一个GLLine对象并加到一个列表中，当绘制的时候，按照顺序依次绘制每一条线，当撤回的时候，从列表的尾部移除就可以了。</p>
+<h3 id="6-2-进一步优化思考"><a href="#6-2-进一步优化思考" class="headerlink" title="6.2 进一步优化思考"></a>6.2 进一步优化思考</h3><p>经过了上面的步骤，其实已经基本实现画笔的功能了。但是我们还有一些可以优化的地方。</p>
+<h4 id="6-2-1-让曲线更平滑"><a href="#6-2-1-让曲线更平滑" class="headerlink" title="6.2.1 让曲线更平滑"></a>6.2.1 让曲线更平滑</h4><p>虽然我们已经手动补了很多的点，但是由于我们的补点方式是在两个触摸点构成的直线上补点的，所以我们的曲线在某些时候还是不够平滑。</p>
+<p>如果想让曲线更加平滑，我们可以在补点的时候利用<strong>贝塞尔曲线</strong>公式来补。</p>
+<p><strong>一阶贝塞尔曲线：</strong></p>
+<p><img src="1pbm8g8qe6.png" alt="1pbm8g8qe6"></p>
+<p><img src="4ttmh3k1mq.png" alt="4ttmh3k1mq"></p>
+<p><strong>二阶贝塞尔曲线：</strong></p>
+<p><img src="1pjdzn40dq.png" alt="1pjdzn40dq"></p>
+<p><img src="rdhb67vezo.png" alt="rdhb67vezo"></p>
+<p><strong>三阶贝塞尔曲线：</strong></p>
+<p><img src="qesak0w6q5.png" alt="qesak0w6q5"></p>
+<p><img src="7hlbv0b6c3.png" alt="7hlbv0b6c3"></p>
+<p>我们以二阶贝塞尔曲线为例，可以看到共有P0，P1，P2三个点，<strong>其中P0代表起始点，P2代表终止点，P1代表控制点，用来控制曲线的形状</strong>。当这三个点确定后，就只有t这一个变量，t的取值范围从0到1，当t取不同值的时候，根据公式就能得到曲线上的一个点。三阶贝塞尔曲线也是类似，其中P1，P2作为控制点。</p>
+<p>了解了贝塞尔曲线公式之后，我们就可以在补点的时候，每三个点或每四个点构成作为曲线的起始点，终止点和控制点，然后我们根据公式对t取不同的值求出曲线上的其他点补齐就可以了。</p>
+<p>需要注意的是：t这个变量的取值如果是线性变化的，那么我们得到的点在曲线上的分布往往是<strong>两头稀疏中间密集</strong>，因此需要实现<strong>匀速贝塞尔曲线运动</strong>，具体可以参考这篇文章：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/didi/archive/2009/09/09/1563435.html">https://www.cnblogs.com/didi/archive/2009/09/09/1563435.html</a></p>
+<h4 id="6-2-2-渲染性能优化"><a href="#6-2-2-渲染性能优化" class="headerlink" title="6.2.2 渲染性能优化"></a>6.2.2 渲染性能优化</h4><p>尽管OpenGL的绘制效率比较高，但是当我们画的线非常非常多的时候，在一些低端机上会出现画线操作反应变慢的问题。虽然这种场景比较极端，但是我们还是可以考虑一下优化的方案。</p>
+<p>首先分析一下这种情况下性能下降的原因：</p>
+<ol>
+<li>顶点数量太多：由于我们的线是通过点来拼接出来的，那么当我们画的线非常非常多的时候，所以顶点的数量也非常的多，当OpenGL需要处理的顶点数超过一定的值后渲染效率自然也就下降了。</li>
+<li>重复绘制：我们在画线的时候，可能有些点或者区域重合了，其实不必再重复渲染了。</li>
+</ol>
+<p>为了优化画线过多时的渲染效率，我们可以采取以下方法：</p>
+<ol>
+<li>设定一个顶点数的极限值N，当顶点数超过N时，将当前整个涂鸦层渲染的内容画到FBO上得到一个纹理，当下次渲染的时候，这部分内容就不用逐个顶点绘制了，直接用之前得到的纹理绘制就可以了。</li>
+<li>当用户退出涂鸦状态的时候，也把当前涂鸦层内容画到FBO上并存起来，当用户做一些和涂鸦无关的操作时，涂鸦这一层的内容并没有更新，所以直接用之前保存的纹理绘制即可。</li>
+</ol>
+<p>总的来说，上面两个方法的核心思想就是利用FBO来保存我们绘制的中间结果，这个被我们保存起来的纹理起到了类似”缓存”的作用，减少了渲染时要处理的顶点数，因而能够提升性能。</p>
+<h2 id="7-马赛克"><a href="#7-马赛克" class="headerlink" title="7. 马赛克"></a>7. 马赛克</h2><p>我们编辑器里的马赛克功能其实就是实现一种带有马赛克涂抹效果的画笔，用户可以使用马赛克画笔去遮挡一些图片上不想让别人看到的部分。</p>
+<p>其实，马赛克功能和涂鸦功能有很多共性，他们都是实现一种画笔，只不过涂鸦功能的画笔画出的纯色的曲线，而马赛克功能的画笔画出的则是一些使原图模糊的特色效果，如马赛克效果，毛玻璃效果等，因此之前提到的涂鸦画笔上的一些实现方案，优化方案也都可以直接用在马赛克画笔上。</p>
+<h3 id="7-1-马赛克效果原理"><a href="#7-1-马赛克效果原理" class="headerlink" title="7.1 马赛克效果原理"></a>7.1 马赛克效果原理</h3><p>马赛克效果原理：其实就是让图片中一个指定大小的区域用同一个颜色表示。可以看做是大幅降低图片分辨率的效果。</p>
+<p>马赛克效果示例如下(效果图取自网络)：</p>
+<ul>
+<li><p>矩形马赛克：</p>
+<img src="mosaic_demo.png" alt="img" style="zoom: 67%;" />
+</li>
+<li><p>六边形马赛克：</p>
+<img src="12314.png" alt="img" style="zoom:67%;" />
+
+</li>
+</ul>
+<h3 id="7-2-马赛克滤镜"><a href="#7-2-马赛克滤镜" class="headerlink" title="7.2 马赛克滤镜"></a>7.2 马赛克滤镜</h3><p>在实现马赛克画笔前，先看下怎么给一张图片加马赛克滤镜，以矩形马赛克为例。</p>
+<p>马赛克滤镜实现起来比较简单，我们根据马赛克效果原理，在片段着色器中，让一定大小区域内的片段使用相同颜色即可。片段着色器代码示例如下：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">precision</span> <span class="keyword">highp</span> <span class="type">float</span>;</span><br><span class="line"><span class="keyword">varying</span> <span class="keyword">highp</span> <span class="type">vec2</span> textureCoordinate;</span><br><span class="line"><span class="keyword">uniform</span> <span class="type">sampler2D</span> inputImageTexture;</span><br><span class="line"><span class="keyword">uniform</span> <span class="type">float</span> u_x;</span><br><span class="line"><span class="keyword">uniform</span> <span class="type">float</span> u_y;</span><br><span class="line"><span class="keyword">const</span> <span class="type">vec2</span> mosaicSize = <span class="type">vec2</span>(<span class="number">30.0</span>, <span class="number">30.0</span>);</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> main()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">vec2</span> intXY = <span class="type">vec2</span>(textureCoordinate.x * u_x, textureCoordinate.y * u_y);</span><br><span class="line">    <span class="type">vec2</span> XYMosaic = <span class="type">vec2</span>(<span class="built_in">floor</span>(intXY.x/mosaicSize.x)*mosaicSize.x, <span class="built_in">floor</span>(intXY.y/mosaicSize.y)*mosaicSize.y);</span><br><span class="line">    <span class="type">vec2</span> UVMosaic = <span class="type">vec2</span>(XYMosaic.x/u_x, XYMosaic.y/u_y);</span><br><span class="line">    <span class="built_in">gl_FragColor</span> = <span class="built_in">texture2D</span>(inputImageTexture, UVMosaic);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里我们每个马赛克格子的大小是30*30的，每个格子的颜色取格子第一个点的颜色，当然，我们也可以取格子中间点的颜色或者是取格子内所有点色值的平均值。</p>
+<p>效果如下：</p>
+<img src="Screenshot_20201110-183609.png" alt="Screenshot_20201110-183609" style="zoom: 33%;" />
+
+<h3 id="7-3-马赛克画笔"><a href="#7-3-马赛克画笔" class="headerlink" title="7.3 马赛克画笔"></a>7.3 马赛克画笔</h3><p>实现马赛克画笔，我们可以有三种方案，每个方案达成的效果也不相同，我们可以根据需求进行选择。</p>
+<h4 id="7-3-1-方案一"><a href="#7-3-1-方案一" class="headerlink" title="7.3.1 方案一"></a>7.3.1 方案一</h4><p>第一种方案实现最简单，就是在我们涂鸦画笔的基础上，多传入一个纹理坐标，然后对于每个顶点，我们根据对应的纹理坐标和马赛克算法计算出每个顶点的色值。</p>
+<p>片段着色器如下：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">precision</span> <span class="keyword">mediump</span> <span class="type">float</span>;</span><br><span class="line"><span class="keyword">uniform</span> <span class="keyword">mediump</span> <span class="type">vec4</span> u_Color;</span><br><span class="line"><span class="keyword">varying</span> <span class="type">vec2</span> v_TexCoord;</span><br><span class="line"><span class="keyword">uniform</span> <span class="type">sampler2D</span> u_TextureUnit;</span><br><span class="line"><span class="keyword">uniform</span> <span class="type">float</span> u_x;</span><br><span class="line"><span class="keyword">uniform</span> <span class="type">float</span> u_y;</span><br><span class="line"><span class="keyword">const</span> <span class="type">vec2</span> mosaicSize = <span class="type">vec2</span>(<span class="number">30.0</span>, <span class="number">30.0</span>);</span><br><span class="line"><span class="type">void</span> main()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">float</span> dist = <span class="built_in">length</span>(<span class="built_in">gl_PointCoord</span> - <span class="type">vec2</span>(<span class="number">0.5</span>));</span><br><span class="line">    <span class="type">float</span> value = -<span class="built_in">smoothstep</span>(<span class="number">0.48</span>, <span class="number">0.5</span>, dist) + <span class="number">1.0</span>;</span><br><span class="line">    <span class="keyword">if</span> (value == <span class="number">0.0</span>) &#123;</span><br><span class="line">        <span class="keyword">discard</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="type">vec2</span> intXY = <span class="type">vec2</span>(v_TexCoord.x * u_x, v_TexCoord.y * u_y);</span><br><span class="line">    <span class="type">vec2</span> XYMosaic = <span class="type">vec2</span>(<span class="built_in">floor</span>(intXY.x/mosaicSize.x)*mosaicSize.x, <span class="built_in">floor</span>(intXY.y/mosaicSize.y)*mosaicSize.y);</span><br><span class="line">    <span class="type">vec2</span> UVMosaic = <span class="type">vec2</span>(XYMosaic.x/u_x, XYMosaic.y/u_y);</span><br><span class="line">    <span class="built_in">gl_FragColor</span> = <span class="built_in">texture2D</span>(u_TextureUnit, UVMosaic);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看出和涂鸦画笔的代码差不多，只是计算每个片段颜色时，涂鸦是取指定画笔颜色，而这里是根据纹理坐标和马赛克算法算出的。</p>
+<p>实现效果如下：</p>
+<img src="Screenshot_20201110-184519.png" alt="Screenshot_20201110-184519" style="zoom:33%;" />
+
+<h4 id="7-3-2-方案二"><a href="#7-3-2-方案二" class="headerlink" title="7.3.2 方案二"></a>7.3.2 方案二</h4><p>方案一的效果在画笔重复涂抹一块区域的时候，这部分区域的马赛克效果是会一直叠加的，但我们希望的是已经涂抹的区域上多次反复涂抹不会造成多层的效果，我们希望马赛克能逐块显示并且不会有多层叠加的效果。</p>
+<p>为了能达到马赛克逐块显示的效果，<strong>我们可以把整个画面分割成若干个方块，当我们的画线经过某个方块时，就把这个方块显示出来，这个方块的颜色就采用方块中心点的色值</strong>。</p>
+<p>具体代码实现就是我们把方块的中心点坐标和纹理坐标传递给着色器程序渲染，并且设定每个点图元的大小就是方块大小。此外，我们还可以声明一个和方块总数等大的ByteBuffer，用来存储每个方块是否已经展示了，已经展示的方块就不用再加到OpenGL的顶点数组中去了。代码示例如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">putPoint</span><span class="params">(<span class="keyword">float</span> x, <span class="keyword">float</span> y)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (mVertexBufferIndex / <span class="number">2</span> &gt;= mMaxVertexCount) &#123;</span><br><span class="line">        reAllocBuffer();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 计算触摸点落在哪个方格，也就是方格所在第几行，第几列</span></span><br><span class="line">    <span class="keyword">int</span> unitIndexX = (<span class="keyword">int</span>) (x / mMosaicUnitSize);</span><br><span class="line">    <span class="keyword">int</span> unitIndexY = (<span class="keyword">int</span>) (y / mMosaicUnitSize);</span><br><span class="line">    <span class="comment">// 计算方格中心点坐标</span></span><br><span class="line">    <span class="keyword">float</span> unitCenterX = Math.min(mOutputWidth, unitIndexX * mMosaicUnitSize + mMosaicUnitSize / <span class="number">2f</span>);</span><br><span class="line">    <span class="keyword">float</span> unitCenterY = Math.min(mOutputHeight, unitIndexY * mMosaicUnitSize + mMosaicUnitSize / <span class="number">2f</span>);</span><br><span class="line">    <span class="comment">// 计算这个方格在标记数组中的位置</span></span><br><span class="line">    <span class="keyword">int</span> unitIndexInBuffer = unitIndexY * mColumnCount + unitIndexX;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 判断当前方块是否已经添加到顶点数组中</span></span><br><span class="line">    <span class="keyword">short</span> v = mMosaicMarkBuffer.get(unitIndexInBuffer);</span><br><span class="line">    <span class="keyword">if</span> (v == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="comment">// 将方格中心点世界坐标加入顶点数组</span></span><br><span class="line">        mMosaicVertexBuffer.put(mVertexBufferIndex++, convertX(unitCenterX));</span><br><span class="line">        mMosaicVertexBuffer.put(mVertexBufferIndex++, convertY(unitCenterY));</span><br><span class="line">        <span class="comment">// 将方格中心点对应纹理坐标加入纹理坐标数组</span></span><br><span class="line">        mMosaicTexBuffer.put(mVertexTexBufferIndex++, getTexX(unitCenterX));</span><br><span class="line">        mMosaicTexBuffer.put(mVertexTexBufferIndex++, getTexY(unitCenterY));</span><br><span class="line">        mPointCount++;</span><br><span class="line">        mMosaicMarkBuffer.put(unitIndexInBuffer, (<span class="keyword">short</span>) <span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样，我们的马赛克就是逐块显示的了，对同一区域重复涂抹也不会再造成多层的效果了：</p>
+<p>效果如下：</p>
+<img src="Screenshot_20201110-184828.png" alt="Screenshot_20201110-184828" style="zoom:33%;" />
+
+<h4 id="7-3-3-方案三"><a href="#7-3-3-方案三" class="headerlink" title="7.3.3 方案三"></a>7.3.3 方案三</h4><p>方案二我们做到了让马赛克一块一块显示，但这样的视觉效果不够好，我们希望一个触摸点能展示多块，并且画笔的笔触能像涂鸦画笔一样是圆形的，类似下面这样的效果：</p>
+<p><img src="Screenshot_20201110-185257__01.png" alt="Screenshot_20201110-185257__01"></p>
+<p>为了实现这样的效果，<strong>我们可以假想在原图上盖了一层添加了马赛克滤镜效果后的图，并且这个马赛克图是透明的，当我们的画笔涂抹了哪个部分，就把透明图层中的哪个部分显现出来</strong>。</p>
+<p><strong>技术实现：</strong></p>
+<p><strong>我们需要先准备好原图对应的马赛克图，可以在拿到原图后对原图添加马赛克滤镜效果并绘制到FBO上，这样就得到了马赛克图的纹理，然后我们在画线的时候和涂鸦画笔类似，只是曲线上每个圆点不是纯色的，而是把马赛克图中圆点对应位置的纹理“贴”上去。</strong></p>
+<p>这个方案看起来就像是方案一和方案二的结合，而这里的难点就在于：<strong>我们如何把马赛克图中指定位置的部分纹理贴到一个圆点上？</strong></p>
+<p>我们之前绘制一个纹理的时候，通常都是使用三角形图元拼接出的矩形区域上绘制纹理，那么能够直接在一个单独的点上绘制纹理吗？答案是可以的。<strong>在OpenGL中，当我们使用点图元绘制时，一个点图元也会被分割成多个片段，我们可以通过片段着色器的内建变量gl_PointCoord得到当前片段在一个点图元中的位置，然后就可以根据这个点图元中心位置(也就是这个触摸点的位置)对应的纹理坐标计算出点图元中每个小片段对应的纹理坐标，这样我们就可以在一个点图元上贴图了</strong>。片段着色器代码如下：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version 120</span></span><br><span class="line"><span class="keyword">precision</span> <span class="keyword">mediump</span> <span class="type">float</span>;</span><br><span class="line"><span class="keyword">varying</span> <span class="type">vec2</span> v_TexCoord;</span><br><span class="line"><span class="keyword">uniform</span> <span class="type">sampler2D</span> u_TextureUnit;</span><br><span class="line"><span class="keyword">const</span> <span class="type">float</span> size=<span class="number">50.0</span>;</span><br><span class="line"><span class="keyword">const</span> <span class="type">float</span> sizePoint=<span class="number">100.0</span>;</span><br><span class="line"><span class="keyword">uniform</span> <span class="type">float</span> u_x;</span><br><span class="line"><span class="keyword">uniform</span> <span class="type">float</span> u_y;</span><br><span class="line"><span class="keyword">uniform</span> <span class="type">float</span> u_Mode;</span><br><span class="line"><span class="type">void</span> main() &#123;</span><br><span class="line">    <span class="keyword">if</span> (u_Mode==<span class="number">1.0</span>)&#123;</span><br><span class="line">        <span class="built_in">gl_FragColor</span>=<span class="built_in">texture2D</span>(u_TextureUnit, v_TexCoord);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="type">float</span> dist = <span class="built_in">length</span>(<span class="built_in">gl_PointCoord</span> - <span class="type">vec2</span>(<span class="number">0.5</span>));</span><br><span class="line">        <span class="type">float</span> value = -<span class="built_in">smoothstep</span>(<span class="number">0.48</span>, <span class="number">0.5</span>, dist) + <span class="number">1.0</span>;</span><br><span class="line">        <span class="comment">// 为了绘制圆点，把边角部分裁掉</span></span><br><span class="line">        <span class="keyword">if</span> (value==<span class="number">0.0</span>)&#123;</span><br><span class="line">            <span class="keyword">discard</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="type">float</span> widthTex=size/u_x;</span><br><span class="line">        <span class="type">float</span> heightTex=size/u_y;</span><br><span class="line"></span><br><span class="line">        <span class="type">float</span> widthPoint=sizePoint/u_x;</span><br><span class="line">        <span class="type">float</span> heightPoint=sizePoint/u_y;</span><br><span class="line"></span><br><span class="line">        <span class="type">float</span> left=v_TexCoord.x-(widthTex/<span class="number">2.0</span>);</span><br><span class="line">        <span class="type">float</span> top=v_TexCoord.y-(heightTex/<span class="number">2.0</span>);</span><br><span class="line">        <span class="type">float</span> x=left+<span class="built_in">gl_PointCoord</span>.x*widthPoint;</span><br><span class="line">        <span class="type">float</span> y=top+<span class="built_in">gl_PointCoord</span>.y*heightPoint;</span><br><span class="line">        <span class="type">vec2</span> resultCoord=<span class="type">vec2</span>(x, y);</span><br><span class="line">        <span class="built_in">gl_FragColor</span>=<span class="built_in">texture2D</span>(u_TextureUnit, resultCoord);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样我们就实现了在画笔涂抹区域把图片显示出来，demo效果如下：</p>
+<img src="Screenshot_20201110-190116.png" alt="Screenshot_20201110-190116" style="zoom:33%;" />
+
+<p>解决了这个问题，接下来我们只需要把这个demo里的贴图改为预先准备好的马赛克图就可以了。如果我们后续还需要实现其他效果如毛玻璃，也可以采用类似的方案，只需要把马赛克图换成一个毛玻璃图就可以。</p>
+
+
+                <hr>
+
+                
+
+                <ul class="pager">
+                    
+                    
+                        <li class="next">
+                            <a href="/2020/11/12/图片编辑器实战-上/" data-toggle="tooltip" data-placement="top" title="图片编辑器实战(上)">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+
+                
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+
+                <!-- Friends Blog -->
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; NNAT 2020 
+                    <br>
+                    <!-- Theme by <a target="_blank" rel="noopener" href="http://huangxuan.me">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    Ported by <a target="_blank" rel="noopener" href="http://blog.kaijun.rocks">Kaijun</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true" >
+                    </iframe> -->
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://example.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="http://example.com/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>
